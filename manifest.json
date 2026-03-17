@@ -1,0 +1,32 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Xcode Companion",
+  "name_for_model": "xcode-companion",
+  "version": "1.0.0",
+  "description": "The missing IDE context layer for Claude Code on Xcode. Build projects, get compilation errors, auto-fix, and provide Xcode context to Claude.",
+  "author": {
+    "name": "EchoZhao",
+    "url": "https://github.com/EchoZhaoH/claude-code-xcode-companion"
+  },
+  "repository": {
+    "url": "https://github.com/EchoZhaoH/claude-code-xcode-companion"
+  },
+  "skills": [
+    {
+      "name": "xcode-companion",
+      "path": "skills/xcode-companion"
+    }
+  ],
+  "keywords": [
+    "xcode",
+    "ios",
+    "swift",
+    "build",
+    "apple",
+    "mcp",
+    "claude-code"
+  ],
+  "requirements": {
+    "cli_version": ">=0.6.0"
+  }
+}

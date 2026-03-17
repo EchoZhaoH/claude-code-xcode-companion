@@ -1,18 +1,33 @@
-# xcode-companion
+# Xcode Companion
 
-Xcode project smart assistant - build, get errors, auto-fix for Claude Code.
+> The missing IDE context layer for Claude Code on Xcode
+
+Xcode project smart assistant - build, get errors, auto-fix, and provide Xcode context to Claude.
 
 ## Install
 
+### Option 1: Claude Code Plugin (Recommended)
+
+Submit to Claude Code marketplace or install locally:
+
 ```bash
+# Local installation
 ln -s /path/to/xcode-companion ~/.claude/skills/xcode-companion
 ```
 
-Or copy to project:
+### Option 2: Copy to Project
 
 ```bash
 cp -r xcode-companion .claude/skills/
 ```
+
+## Features
+
+- **Build** - Compile Xcode projects with xcodebuild
+- **Errors** - Parse and display compilation errors
+- **Fix** - Auto-fix common Swift compilation errors
+- **Clean** - Clean build folder
+- **Simulators** - List available iOS simulators
 
 ## Usage
 
@@ -29,20 +44,12 @@ Or describe naturally:
 - "Fix the build errors"
 - "Clean the build"
 
-## Commands
+## Architecture
 
-| Command | Description |
-|---------|-------------|
-| `/build [scheme] [destination]` | Build Xcode project |
-| `/errors [xcresult]` | Get compilation errors |
-| `/fix [file]` | Auto-fix errors |
-| `/clean` | Clean build folder |
-| `/simulators` | List available simulators |
+```
+Claude Code → Xcode Companion Skill → xcodebuild
+```
 
-## Tools
+## License
 
-- **Bash**: Execute xcodebuild commands
-- **Read**: Read source files
-- **Edit**: Modify code
-- **Grep**: Search code
-- **Write**: Create new files
+MIT

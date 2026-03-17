@@ -1,9 +1,8 @@
 ---
 name: xcode-companion
-description: Xcode project build assistant - build projects, get compilation errors, auto-fix. Use when user wants to build, compile, or fix Xcode projects.
-disable-model-invocation: true
+description: Xcode project build assistant - build projects, get compilation errors, auto-fix, provide Xcode context. Use when user wants to build, compile, fix Xcode projects, or needs Xcode context.
+disable-model-invocation: false
 allowed-tools: Bash, Glob, Grep, Read, Edit, Write
-argument-hint: [scheme] [destination]
 ---
 
 # Xcode Companion
@@ -104,3 +103,38 @@ xcrun simctl list devices available | grep -E "iPhone|iPad"
 3. Build with `-destination 'generic/platform=iOS'` for device builds
 4. Use `xcodebuild -showBuildSettings` to see all settings
 5. Check `.xcodeproj/project.pbxproj` for project configuration
+
+## Natural Language Commands
+
+You can also respond to natural language requests:
+
+| User Request | Action |
+|--------------|--------|
+| "Build my iOS project" | Run /build |
+| "What errors do we have?" | Run /errors |
+| "Fix the build errors" | Run /fix |
+| "Clean the build" | Run /clean |
+| "List available devices" | Run /simulators |
+| "Why is this crashing?" | Run /build then /errors then analyze |
+| "Make this a reusable component" | Read selection, refactor code |
+
+## Use Cases
+
+### Build and Fix Workflow
+1. User: "Build my project"
+2. Run `/build` → Get errors
+3. Run `/fix` → Auto-fix common errors
+4. Run `/build` again → Verify fix
+
+### Error Analysis Workflow
+1. User: "Why is this code failing?"
+2. Run `/build` to get errors
+3. Run `/errors` to parse error details
+4. Analyze and explain the root cause
+
+### Context-Aware Assistance
+When user asks about Xcode-related tasks, proactively provide context:
+- Current file path
+- Selection (if any)
+- Recent build errors
+- Project structure
