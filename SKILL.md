@@ -1,49 +1,106 @@
 ---
 name: xcode-companion
-description: Xcode project build, get compilation errors, auto-fix
-allowed-tools: Bash, Glob, Grep, Read, Edit
+description: Xcode project build assistant - build projects, get compilation errors, auto-fix. Use when user wants to build, compile, or fix Xcode projects.
+disable-model-invocation: true
+allowed-tools: Bash, Glob, Grep, Read, Edit, Write
+argument-hint: [scheme] [destination]
 ---
 
-## When to use
+# Xcode Companion
 
-Use when user wants to:
-- Build Xcode project and get errors
-- Check compilation errors
-- Fix errors automatically
+Build, analyze, and fix Xcode projects.
 
-## Commands
+## Usage
 
-### /build
+### /build [scheme] [destination]
 Build Xcode project and get compilation errors.
 
 **Steps:**
 1. Find project: `ls *.xcworkspace *.xcodeproj`
-2. List schemes: `xcodebuild -list -project <project>`
-3. Build: `xcodebuild -project <project> -scheme <scheme> -destination 'platform=iOS Simulator' build -json`
+2. List schemes: `xcodebuild -list -project <project>` (if no scheme provided)
+3. Build with JSON output for parsing:
+   ```bash
+   xcodebuild -project <project> -scheme <scheme> -destination 'platform=iOS Simulator,name=iPhone 16' build -json 2>&1 | tee build.json
+   ```
 
-### /errors
-Get compilation errors.
+**Parameters:**
+- `scheme`: Target scheme (optional, will prompt if not found)
+- `destination`: Build destination (default: 'platform=iOS Simulator,name=iPhone 16')
+
+### /errors [xcresult-path]
+Get compilation errors from build result.
 
 **Steps:**
 1. From xcresult: `xcrun xcresulttool format json --path <xcresult>`
-2. Or from build: `xcodebuild ... build -json`
+2. Parse JSON output for error details
 
-### /fix
+### /fix [file-or-directory]
 Auto-fix compilation errors.
 
 **Steps:**
-1. Get errors first
-2. Analyze and fix:
+1. Get errors first using `/errors`
+2. Analyze each error type and apply fixes:
 
-| Error | Fix |
-|-------|-----|
-| Cannot find 'X' | Add import/declaration |
-| Missing return | Add return |
+| Error Pattern | Fix |
+|--------------|-----|
+| Cannot find 'X' in scope | Add import or declare missing symbol |
+| Missing return in function | Add return statement |
 | Type mismatch | Fix type conversion |
+| Variable used before being assigned | Initialize variable |
+| No such module 'X' | Add missing framework/Swift package |
+| Cannot convert value 'X' to type 'Y' | Fix type casting |
+| Property 'X' not found on object | Check property name or type |
+| Ambiguous use of 'X' | Specify explicit type |
+| Declaration requires explicit initializer | Add default value |
+| Value of type 'X' has no member 'Y' | Check correct API |
 
-3. Verify: rebuild
+3. Verify by rebuilding: `/build`
 
-## Notes
+### /clean
+Clean Xcode build folder.
 
-- Always confirm before modifying code
-- Use `-json` flag for structured output
+**Steps:**
+1. Find project
+2. Run: `xcodebuild -project <project> -scheme <scheme> clean`
+
+### /simulators
+List available iOS simulators.
+
+**Steps:**
+```bash
+xcrun simctl list devices available | grep -E "iPhone|iPad"
+```
+
+## Common Error Fixes
+
+### Import Issues
+```swift
+// Error: Cannot find 'SwiftUI' in scope
+// Fix: Add import SwiftUI
+```
+
+### Type Mismatch
+```swift
+// Error: Cannot convert value of type 'String' to expected argument type 'Int'
+// Fix: Convert types appropriately using Int(string) or String(describing:)
+```
+
+### Nil Handling
+```swift
+// Error: Value of optional type 'String?' must be unwrapped
+// Fix: Use guard let, if let, or ?? operator
+```
+
+### Missing Return
+```swift
+// Error: Missing return in global function expected to return 'String'
+// Fix: Add return statement
+```
+
+## Best Practices
+
+1. Always confirm before modifying code
+2. Use `-json` flag for structured error output
+3. Build with `-destination 'generic/platform=iOS'` for device builds
+4. Use `xcodebuild -showBuildSettings` to see all settings
+5. Check `.xcodeproj/project.pbxproj` for project configuration
